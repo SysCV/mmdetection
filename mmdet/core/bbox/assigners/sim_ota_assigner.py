@@ -252,3 +252,62 @@ class SimOTAAssigner(BaseAssigner):
         matched_pred_ious = (matching_matrix *
                              pairwise_ious).sum(1)[fg_mask_inboxes]
         return matched_pred_ious, matched_gt_inds
+
+
+@BBOX_ASSIGNERS.register_module()
+class ClippedSimOTAAssigner(SimOTAAssigner):
+    """Modified SimOTAAssigner to support boxes with center outside of img."""
+
+    def __init__(self, h: int, w: int, *args, **kwargs) -> None:
+        """Init."""
+        super().__init__(*args, **kwargs)
+        self.im_h, self.im_w = h, w
+
+    def get_in_gt_and_in_center_info(self, priors, gt_bboxes):
+        num_gt = gt_bboxes.size(0)
+
+        repeated_x = priors[:, 0].unsqueeze(1).repeat(1, num_gt)
+        repeated_y = priors[:, 1].unsqueeze(1).repeat(1, num_gt)
+        repeated_stride_x = priors[:, 2].unsqueeze(1).repeat(1, num_gt)
+        repeated_stride_y = priors[:, 3].unsqueeze(1).repeat(1, num_gt)
+
+        # is prior centers in gt bboxes, shape: [n_prior, n_gt]
+        l_ = repeated_x - gt_bboxes[:, 0]
+        t_ = repeated_y - gt_bboxes[:, 1]
+        r_ = gt_bboxes[:, 2] - repeated_x
+        b_ = gt_bboxes[:, 3] - repeated_y
+
+        deltas = torch.stack([l_, t_, r_, b_], dim=1)
+        is_in_gts = deltas.min(dim=1).values > 0
+        is_in_gts_all = is_in_gts.sum(dim=1) > 0
+
+        gt_cxs = torch.clamp(
+            (gt_bboxes[:, 0] + gt_bboxes[:, 2]) / 2.0, min=0, max=self.im_w
+        )
+        gt_cys = torch.clamp(
+            (gt_bboxes[:, 1] + gt_bboxes[:, 3]) / 2.0, min=0, max=self.im_h
+        )
+
+        ct_box_l = gt_cxs - self.center_radius * repeated_stride_x
+        ct_box_t = gt_cys - self.center_radius * repeated_stride_y
+        ct_box_r = gt_cxs + self.center_radius * repeated_stride_x
+        ct_box_b = gt_cys + self.center_radius * repeated_stride_y
+
+        cl_ = repeated_x - ct_box_l
+        ct_ = repeated_y - ct_box_t
+        cr_ = ct_box_r - repeated_x
+        cb_ = ct_box_b - repeated_y
+
+        ct_deltas = torch.stack([cl_, ct_, cr_, cb_], dim=1)
+        is_in_cts = ct_deltas.min(dim=1).values > 0
+        is_in_cts_all = is_in_cts.sum(dim=1) > 0
+
+        # in boxes or in centers, shape: [num_priors]
+        is_in_gts_or_centers = is_in_gts_all | is_in_cts_all
+
+        # both in boxes and centers, shape: [num_fg, num_gt]
+        is_in_boxes_and_centers = (
+            is_in_gts[is_in_gts_or_centers, :]
+            & is_in_cts[is_in_gts_or_centers, :]
+        )
+        return is_in_gts_or_centers, is_in_boxes_and_centers
