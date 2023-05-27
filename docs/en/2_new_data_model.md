@@ -153,6 +153,7 @@ The code to convert the balloon dataset into coco format is as below.
 
 ```python
 import os.path as osp
+import mmcv
 
 def convert_balloon_to_coco(ann_file, out_file, image_prefix):
     data_infos = mmcv.load(ann_file)
@@ -241,6 +242,8 @@ data = dict(
 # We can use the pre-trained Mask RCNN model to obtain higher performance
 load_from = 'checkpoints/mask_rcnn_r50_caffe_fpn_mstrain-poly_3x_coco_bbox_mAP-0.408__segm_mAP-0.37_20200504_163245-42aa3d00.pth'
 ```
+
+This checkpoint file can be downloaded [here](https://download.openmmlab.com/mmdetection/v2.0/mask_rcnn/mask_rcnn_r50_caffe_fpn_mstrain-poly_3x_coco/mask_rcnn_r50_caffe_fpn_mstrain-poly_3x_coco_bbox_mAP-0.408__segm_mAP-0.37_20200504_163245-42aa3d00.pth)
 
 ## Train a new model
 

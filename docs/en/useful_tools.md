@@ -1,52 +1,52 @@
 Apart from training/testing scripts, We provide lots of useful tools under the
- `tools/` directory.
+`tools/` directory.
 
 ## Log Analysis
 
 `tools/analysis_tools/analyze_logs.py` plots loss/mAP curves given a training
- log file. Run `pip install seaborn` first to install the dependency.
+log file. Run `pip install seaborn` first to install the dependency.
 
- ```shell
-python tools/analysis_tools/analyze_logs.py plot_curve [--keys ${KEYS}] [--title ${TITLE}] [--legend ${LEGEND}] [--backend ${BACKEND}] [--style ${STYLE}] [--out ${OUT_FILE}]
- ```
+```shell
+python tools/analysis_tools/analyze_logs.py plot_curve [--keys ${KEYS}] [--eval-interval ${EVALUATION_INTERVAL}] [--title ${TITLE}] [--legend ${LEGEND}] [--backend ${BACKEND}] [--style ${STYLE}] [--out ${OUT_FILE}]
+```
 
-![loss curve image](../resources/loss_curve.png)
+![loss curve image](../../resources/loss_curve.png)
 
 Examples:
 
 - Plot the classification loss of some run.
 
-    ```shell
-    python tools/analysis_tools/analyze_logs.py plot_curve log.json --keys loss_cls --legend loss_cls
-    ```
+  ```shell
+  python tools/analysis_tools/analyze_logs.py plot_curve log.json --keys loss_cls --legend loss_cls
+  ```
 
 - Plot the classification and regression loss of some run, and save the figure to a pdf.
 
-    ```shell
-    python tools/analysis_tools/analyze_logs.py plot_curve log.json --keys loss_cls loss_bbox --out losses.pdf
-    ```
+  ```shell
+  python tools/analysis_tools/analyze_logs.py plot_curve log.json --keys loss_cls loss_bbox --out losses.pdf
+  ```
 
 - Compare the bbox mAP of two runs in the same figure.
 
-    ```shell
-    python tools/analysis_tools/analyze_logs.py plot_curve log1.json log2.json --keys bbox_mAP --legend run1 run2
-    ```
+  ```shell
+  python tools/analysis_tools/analyze_logs.py plot_curve log1.json log2.json --keys bbox_mAP --legend run1 run2
+  ```
 
 - Compute the average training speed.
 
-    ```shell
-    python tools/analysis_tools/analyze_logs.py cal_train_time log.json [--include-outliers]
-    ```
+  ```shell
+  python tools/analysis_tools/analyze_logs.py cal_train_time log.json [--include-outliers]
+  ```
 
-    The output is expected to be like the following.
+  The output is expected to be like the following.
 
-    ```text
-    -----Analyze train time of work_dirs/some_exp/20190611_192040.log.json-----
-    slowest epoch 11, average time is 1.2024
-    fastest epoch 1, average time is 1.1909
-    time std over epochs is 0.0028
-    average iter time: 1.1959 s/iter
-    ```
+  ```text
+  -----Analyze train time of work_dirs/some_exp/20190611_192040.log.json-----
+  slowest epoch 11, average time is 1.2024
+  fastest epoch 1, average time is 1.1909
+  time std over epochs is 0.0028
+  average iter time: 1.1959 s/iter
+  ```
 
 ## Result Analysis
 
@@ -116,8 +116,8 @@ python tools/analysis_tools/analyze_results.py \
 ### Visualize Datasets
 
 `tools/misc/browse_dataset.py` helps the user to browse a detection dataset (both
- images and bounding box annotations) visually, or save the image to a
-  designated directory.
+images and bounding box annotations) visually, or save the image to a
+designated directory.
 
 ```shell
 python tools/misc/browse_dataset.py ${CONFIG} [-h] [--skip-type ${SKIP_TYPE[SKIP_TYPE...]}] [--output-dir ${OUTPUT_DIR}] [--not-show] [--show-interval ${SHOW_INTERVAL}]
@@ -128,7 +128,7 @@ python tools/misc/browse_dataset.py ${CONFIG} [-h] [--skip-type ${SKIP_TYPE[SKIP
 First, convert the model to ONNX as described
 [here](#convert-mmdetection-model-to-onnx-experimental).
 Note that currently only RetinaNet is supported, support for other models
- will be coming in later versions.
+will be coming in later versions.
 The converted model could be visualized by tools like [Netron](https://github.com/lutzroeder/netron).
 
 ### Visualize Predictions
@@ -138,7 +138,7 @@ If you need a lightweight GUI for visualizing the detection results, you can ref
 ## Error Analysis
 
 `tools/analysis_tools/coco_error_analysis.py` analyzes COCO results per category and by
- different criterion. It can also make a plot to provide useful information.
+different criterion. It can also make a plot to provide useful information.
 
 ```shell
 python tools/analysis_tools/coco_error_analysis.py ${RESULT} ${OUT_DIR} [-h] [--ann ${ANN}] [--types ${TYPES[TYPES...]}]
@@ -295,11 +295,11 @@ Params: 37.74 M
 ```
 
 **Note**: This tool is still experimental and we do not guarantee that the
- number is absolutely correct. You may well use the result for simple
-  comparisons, but double check it before you adopt it in technical reports or papers.
+number is absolutely correct. You may well use the result for simple
+comparisons, but double check it before you adopt it in technical reports or papers.
 
 1. FLOPs are related to the input shape while parameters are not. The default
- input shape is (1, 3, 1280, 800).
+   input shape is (1, 3, 1280, 800).
 2. Some operators are not counted into FLOPs like GN and custom operators. Refer to [`mmcv.cnn.get_model_complexity_info()`](https://github.com/open-mmlab/mmcv/blob/master/mmcv/cnn/utils/flops_counter.py) for details.
 3. The FLOPs of two-stage detectors is dependent on the number of proposals.
 
@@ -318,9 +318,9 @@ python tools/deployment/pytorch2onnx.py ${CONFIG_FILE} ${CHECKPOINT_FILE} --outp
 ### MMDetection 1.x model to MMDetection 2.x
 
 `tools/model_converters/upgrade_model_version.py` upgrades a previous MMDetection checkpoint
- to the new version. Note that this script is not guaranteed to work as some
-  breaking changes are introduced in the new version. It is recommended to
-   directly use the new checkpoints.
+to the new version. Note that this script is not guaranteed to work as some
+breaking changes are introduced in the new version. It is recommended to
+directly use the new checkpoints.
 
 ```shell
 python tools/model_converters/upgrade_model_version.py ${IN_FILE} ${OUT_FILE} [-h] [--num-classes NUM_CLASSES]
@@ -329,7 +329,7 @@ python tools/model_converters/upgrade_model_version.py ${IN_FILE} ${OUT_FILE} [-
 ### RegNet model to MMDetection
 
 `tools/model_converters/regnet2mmdet.py` convert keys in pycls pretrained RegNet models to
- MMDetection style.
+MMDetection style.
 
 ```shell
 python tools/model_converters/regnet2mmdet.py ${SRC} ${DST} [-h]
@@ -338,7 +338,7 @@ python tools/model_converters/regnet2mmdet.py ${SRC} ${DST} [-h]
 ### Detectron ResNet to Pytorch
 
 `tools/model_converters/detectron2pytorch.py` converts keys in the original detectron pretrained
- ResNet models to PyTorch style.
+ResNet models to PyTorch style.
 
 ```shell
 python tools/model_converters/detectron2pytorch.py ${SRC} ${DST} ${DEPTH} [-h]
@@ -353,7 +353,7 @@ Before you upload a model to AWS, you may want to
 1. convert model weights to CPU tensors
 2. delete the optimizer states and
 3. compute the hash of the checkpoint file and append the hash id to the
- filename.
+   filename.
 
 ```shell
 python tools/model_converters/publish_model.py ${INPUT_FILENAME} ${OUTPUT_FILENAME}
@@ -370,11 +370,21 @@ The final output filename will be `faster_rcnn_r50_fpn_1x_20190801-{hash id}.pth
 ## Dataset Conversion
 
 `tools/data_converters/` contains tools to convert the Cityscapes dataset
- and Pascal VOC dataset to the COCO format.
+and Pascal VOC dataset to the COCO format.
 
 ```shell
 python tools/dataset_converters/cityscapes.py ${CITYSCAPES_PATH} [-h] [--img-dir ${IMG_DIR}] [--gt-dir ${GT_DIR}] [-o ${OUT_DIR}] [--nproc ${NPROC}]
 python tools/dataset_converters/pascal_voc.py ${DEVKIT_PATH} [-h] [-o ${OUT_DIR}]
+```
+
+## Dataset Download
+
+`tools/misc/download_dataset.py` supports downloading datasets such as COCO, VOC, and LVIS.
+
+```shell
+python tools/misc/download_dataset.py --dataset-name coco2017
+python tools/misc/download_dataset.py --dataset-name voc2007
+python tools/misc/download_dataset.py --dataset-name lvis
 ```
 
 ## Benchmark
@@ -411,7 +421,7 @@ python -m torch.distributed.launch --nproc_per_node=1 --master_port=29500 tools/
 ### Evaluating a metric
 
 `tools/analysis_tools/eval_metric.py` evaluates certain metrics of a pkl result file
- according to a config file.
+according to a config file.
 
 ```shell
 python tools/analysis_tools/eval_metric.py ${CONFIG} ${PKL_RESULTS} [-h] [--format-only] [--eval ${EVAL[EVAL ...]}]
@@ -422,7 +432,7 @@ python tools/analysis_tools/eval_metric.py ${CONFIG} ${PKL_RESULTS} [-h] [--form
 ### Print the entire config
 
 `tools/misc/print_config.py` prints the whole config verbatim, expanding all its
- imports.
+imports.
 
 ```shell
 python tools/misc/print_config.py ${CONFIG} [-h] [--options ${OPTIONS [OPTIONS...]}]
@@ -435,7 +445,6 @@ python tools/misc/print_config.py ${CONFIG} [-h] [--options ${OPTIONS [OPTIONS..
 `tools/analysis_tools/optimize_anchors.py` provides two method to optimize YOLO anchors.
 
 One is k-means anchor cluster which refers from [darknet](https://github.com/AlexeyAB/darknet/blob/master/src/detector.c#L1421).
-
 
 ```shell
 python tools/analysis_tools/optimize_anchors.py ${CONFIG} --algorithm k-means --input-shape ${INPUT_SHAPE [WIDTH HEIGHT]} --output-dir ${OUTPUT_DIR}
@@ -454,6 +463,7 @@ python tools/analysis_tools/optimize_anchors.py configs/yolo/yolov3_d53_320_273e
 ```
 
 You will get:
+
 ```
 loading annotations into memory...
 Done (t=9.70s)
@@ -473,11 +483,11 @@ differential_evolution step 489: f(x)= 0.386625
 2021-07-19 19:46:40,798 - mmdet - INFO Result saved in work_dirs/anchor_optimize_result.json
 ```
 
-## Confution Matrix
+## Confusion Matrix
 
 A confusion matrix is a summary of prediction results.
 
-`tools/analysis_tools/confusion_matrix.py` can analyze the prediction results and plot a confution matrix table.
+`tools/analysis_tools/confusion_matrix.py` can analyze the prediction results and plot a confusion matrix table.
 
 First, run `tools/test.py` to save the `.pkl` detection results.
 
@@ -487,6 +497,93 @@ Then, run
 python tools/analysis_tools/confusion_matrix.py ${CONFIG}  ${DETECTION_RESULTS}  ${SAVE_DIR} --show
 ```
 
-And you will get a confution matrix like this:
+And you will get a confusion matrix like this:
 
-![confution_matrix_example](https://user-images.githubusercontent.com/12907710/140513068-994cdbf4-3a4a-48f0-8fd8-2830d93fd963.png)
+![confusion_matrix_example](https://user-images.githubusercontent.com/12907710/140513068-994cdbf4-3a4a-48f0-8fd8-2830d93fd963.png)
+
+## COCO Separated & Occluded Mask Metric
+
+Detecting occluded objects still remains a challenge for state-of-the-art object detectors.
+We implemented the metric presented in paper [A Tri-Layer Plugin to Improve Occluded Detection](https://arxiv.org/abs/2210.10046) to calculate the recall of separated and occluded masks.
+
+There are two ways to use this metric:
+
+### Offline evaluation
+
+We provide a script to calculate the metric with a dumped prediction file.
+
+First, use the `tools/test.py` script to dump the detection results:
+
+```shell
+python tools/test.py ${CONFIG} ${MODEL_PATH} --out results.pkl
+```
+
+Then, run the `tools/analysis_tools/coco_occluded_separated_recall.py` script to get the recall of separated and occluded masks:
+
+```shell
+python tools/analysis_tools/coco_occluded_separated_recall.py results.pkl --out occluded_separated_recall.json
+```
+
+The output should be like this:
+
+```
+loading annotations into memory...
+Done (t=0.51s)
+creating index...
+index created!
+processing detection results...
+[>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>] 5000/5000, 109.3 task/s, elapsed: 46s, ETA:     0s
+computing occluded mask recall...
+[>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>] 5550/5550, 780.5 task/s, elapsed: 7s, ETA:     0s
+COCO occluded mask recall: 58.79%
+COCO occluded mask success num: 3263
+computing separated mask recall...
+[>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>] 3522/3522, 778.3 task/s, elapsed: 5s, ETA:     0s
+COCO separated mask recall: 31.94%
+COCO separated mask success num: 1125
+
++-----------+--------+-------------+
+| mask type | recall | num correct |
++-----------+--------+-------------+
+| occluded  | 58.79% | 3263        |
+| separated | 31.94% | 1125        |
++-----------+--------+-------------+
+Evaluation results have been saved to occluded_separated_recall.json.
+```
+
+### Online evaluation
+
+We implement `OccludedSeparatedCocoDataset` which inherited from the `CocoDataset`.
+To evaluate the recall of separated and occluded masks during training, just replace the validation dataset type with `'OccludedSeparatedCocoDataset'` in your config:
+
+```python
+data = dict(
+    samples_per_gpu=2,
+    workers_per_gpu=2,
+    train=dict(
+        type=dataset_type,
+        ann_file=data_root + 'annotations/instances_train2017.json',
+        img_prefix=data_root + 'train2017/',
+        pipeline=train_pipeline),
+    val=dict(
+        type='OccludedSeparatedCocoDataset',  # modify this
+        ann_file=data_root + 'annotations/instances_val2017.json',
+        img_prefix=data_root + 'val2017/',
+        pipeline=test_pipeline),
+    test=dict(
+        type='OccludedSeparatedCocoDataset',  # modify this
+        ann_file=data_root + 'annotations/instances_val2017.json',
+        img_prefix=data_root + 'val2017/',
+        pipeline=test_pipeline))
+```
+
+Please cite the paper if you use this metric:
+
+```latex
+@article{zhan2022triocc,
+    title={A Tri-Layer Plugin to Improve Occluded Detection},
+    author={Zhan, Guanqi and Xie, Weidi and Zisserman, Andrew},
+    journal={British Machine Vision Conference},
+    year={2022}
+}
+```
